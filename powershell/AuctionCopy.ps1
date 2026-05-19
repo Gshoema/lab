@@ -54,8 +54,8 @@ $LotDay = $LotDay -replace "Content           : {auctionid:....,LotDay:", ""
 $LotDay = $LotDay -replace "}.+", ""
 
 #Copy to AK1-Share
-$vanUser = "aasuser@road.mecum.com"
-$vanPassword = "mecumaas"
+$vanUser = ""
+$vanPassword = ""
 net use \\van\AK1-Share\IPC$ $vanPassword /user:$vanUser
 
 #/XF "Desktop.ini" added because folder names were getting wonky.
@@ -64,8 +64,8 @@ robocopy "D:\caspar\" "\\van\AK1-Share\Resolutions\$AuctionID\$LotDay\" /ZB /XF 
 net use \\van\AK1-Share\IPC$ /delete
 
 #Copy to Shelby
-#$User = "utility"
-#$Password = "mecumtools"
+#$User = ""
+#$Password = 
 net use \192.168.200.94\ava\ mecumtools /user:utility
 
 robocopy "D:\caspar\" "\192.168.200.94\ava\$Year\$AuctionID\$LotDay\" /ZB /XF "Desktop.ini" /MT /R:2 /W:5 /TEE /LOG:C:\logs\robocopy_auction-$($Date).log /DCOPY:DAT /COPY:DAT

@@ -1,0 +1,1 @@
+This is to show the way jscript uses template literals (strings with backtick ``) to embed variables and concatenate them with other objects/classes within the code.
