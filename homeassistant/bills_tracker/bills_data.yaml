@@ -1,0 +1,155 @@
+##############################################################################
+# Bills & Payday data
+# Place at: <config>/bills_data.yaml
+#
+# PAYDAY - choose exactly ONE of these three recurrence types:
+#
+#   weekly   -> weekday: monday/tuesday/.../sunday (or 0-6, Monday=0)
+#   biweekly -> weekday: same as above, PLUS anchor_date: "YYYY-MM-DD"
+#               anchor_date must be one real, known payday on that weekday -
+#               it's used to figure out which weeks are "on" vs "off" in
+#               the every-other-week cycle. Any date that was/will be an
+#               actual biweekly payday works, past or future.
+#   monthly  -> due_day: 1-31, or "eom" for last business day / end of month
+#
+# BILLS - each bill can independently use any of these recurrence types
+# (payday only needs the three above; bills support the full set since
+# things like car insurance, annual subscriptions, and every-other-month
+# charges are all common):
+#
+#   monthly    -> due_day: 1-31, or "eom" for end-of-month
+#   bimonthly  -> due_day: 1-31 (or "eom"), PLUS anchor_month: 1-12
+#                 Charges every OTHER month. anchor_month is any ONE month
+#                 you know it charges - e.g. anchor_month: 1 means it
+#                 charges Jan/Mar/May/Jul/Sep/Nov (odd months); anchor_month: 2
+#                 would mean Feb/Apr/Jun/Aug/Oct/Dec (even months) instead.
+#   yearly     -> due_day: 1-31 (or "eom"), plus due_month: 1-12
+#   weekly     -> weekday: monday/tuesday/.../sunday (or 0-6, Monday=0)
+#   biweekly   -> weekday + anchor_date, same as payday above
+#
+# After editing, call service pyscript.update_bills_sensors to refresh
+# immediately, or wait for the nightly 00:05 refresh.
+##############################################################################
+
+# ---- pick ONE payday option and delete/comment the other two ----
+
+payday:
+  recurrence: weekly
+  weekday: friday
+
+# payday:
+#   recurrence: biweekly
+#   weekday: friday
+#   anchor_date: "2026-07-10"   # a Friday you know/knew was an actual payday
+
+# payday:
+#   recurrence: monthly
+#   due_day: 1        # or "eom" if paid on the last business day
+
+bills:
+  - name: "Rent"
+    amount: 446.59
+    recurrence: monthly
+    due_day: 15
+
+  - name: "HOA"
+    amount: 88.75
+    recurrence: monthly
+    due_day: 2
+
+  - name: "Car Loan"
+    amount: 532.18
+    recurrence: monthly
+    due_day: 7
+
+  - name: "Insurance- Car/Home"
+    amount: 143.01
+    recurrence: monthly
+    due_day: 3
+    
+  - name: "Gas"
+    amount: 40.00
+    recurrence: monthly
+    due_day: 26
+
+  - name: "Electric"
+    amount: 92.50
+    recurrence: monthly
+    due_day: 23
+    
+  - name: "phone" 
+    amount: 93.00
+    recurrence: monthly
+    due_day: 23
+
+  - name: "Water/Sewer"
+    amount: 70.58
+    recurrence: bimonthly
+    due_day: 21
+    anchor_month: 2
+
+  - name: "Internet"
+    amount: 27.50
+    recurrence: monthly
+    due_day: 25
+    
+  - name: "Credit Card"
+    amount: 30.00
+    recurrence: monthly
+    due_day: 17
+    
+  - name: "Credit Card - Interest"
+    amount: 175.00
+    recurrence: monthly
+    due_day: 22
+
+#Subscriptions
+  - name: "Amazon - Subscription"
+    amount: 140.00
+    recurrence: yearly
+    due_day: 2
+    due_month: 5
+    
+  - name: "Spotify - Subscription"
+    amount: 13.00
+    recurrence: monthly
+    due_day: 12
+
+  - name: "Crunchy Roll - Subscription"
+    amount: 14.00
+    recurrence: monthly
+    due_day: 29
+    
+  - name: "Wordpress"
+    amount: 33.33
+    recurrence: yearly
+    due_day: 12
+    due_month: 5
+
+  - name: "Squarespace Domain Name"
+    amount: 20.00
+    recurrence: yearly
+    due_day: 12
+    due_month: 4
+    
+  - name: "Toyota Care"
+    amount: 80.00
+    recurrence: yearly
+    due_day: 15
+    due_month: 5
+    
+# ---- add more bills here, following the same pattern ----
+#  - name: "Lawn Service"
+#    amount: 40.00
+#    recurrence: weekly
+#    weekday: wednesday
+#    
+#  - name: "TEST"
+#    amount: 10
+#    recurrance: monthly
+#    due_day: eom # bills that land on the end of the month go here
+
+# - name: "Streaming Service"
+#   amount: 15.99
+#   recurrence: monthly
+#   due_day: 20

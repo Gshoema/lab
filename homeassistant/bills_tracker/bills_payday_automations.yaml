@@ -1,0 +1,55 @@
+##############################################################################
+# Place at: <config>/packages/bills_payday_automations.yaml
+# (or merge into your existing automations)
+#
+# Both automations below target the single shared calendar.bills/todo.bills
+# entities directly - fixed forever, regardless of how many users exist.
+# Adding or removing a user in bills_data.yaml never requires editing this
+# file.
+##############################################################################
+
+automation:
+  - id: bills_breakdown_callback
+    alias: "Telegram Bills Breakdown Reply (any user)"
+    trigger:
+      - platform: event
+        event_type: telegram_callback
+    condition:
+      - condition: template
+        value_template: "{{ trigger.event.data.data is defined and trigger.event.data.data.startswith('/bills_breakdown_') }}"
+    action:
+      - service: telegram_bot.send_message
+        data:
+          # Reply to the SAME chat that tapped the button, not the default
+          # configured chat - important with multiple users' chats.
+          chat_id: "{{ [trigger.event.data.chat_id] }}"
+          message: >
+            {% set slug = trigger.event.data.data.replace('/bills_breakdown_', '') %}
+            {% set items = state_attr('sensor.bills_due_before_next_payday_' ~ slug, 'breakdown') %}
+            {% if items %}
+              Upcoming bills:
+              {% for b in items %}
+              • {{ b.name }}: ${{ b.amount }} (due {{ b.due }})
+              {% endfor %}
+            {% else %}
+              No bills due before your next payday.
+            {% endif %}
+    mode: queued
+
+  - id: bills_tally_on_checkbox_change
+    alias: "Tally Paid Bills On Checkbox Change (any user)"
+    # Fixed target - the shared todo.bills entity never changes as users
+    # are added/removed, so this never needs editing. Recomputes every
+    # user's tally on any checkbox change rather than trying to isolate
+    # which user's item changed (cheap, and avoids depending on unverified
+    # per-item trigger data fields).
+    trigger:
+      - trigger: todo.item_completed
+        target:
+          entity_id: todo.bills
+      - trigger: todo.item_removed
+        target:
+          entity_id: todo.bills
+    action:
+      - service: pyscript.tally_paid_this_month
+    mode: single
